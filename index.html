@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini 图片去水印专业版 - 免费在线 AI 修复工具 (无需Python)</title>
+    
+    <meta name="description" content="全网首发！免费在线 Gemini 图片去水印工具。采用 OpenCV 本地 AI 引擎，支持智能涂抹、无损裁剪和画质增强。保护隐私，无需上传服务器。">
+    <meta name="keywords" content="Gemini去水印, Google Gemini水印怎么去, AI绘画去水印, 在线修图, OpenCV.js, 免费去水印工具">
+    <meta name="author" content="Gemini Cleaner Pro">
+    
+    <meta property="og:title" content="Gemini 图片智能去水印工具">
+    <meta property="og:description" content="一键去除 AI 图片水印，智能修复背景，保护隐私，免费使用。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://gemini.112583.xyz/">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Gemini Cleaner Pro",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      },
+      "url": "http://gemini.112583.xyz/",
+      "description": "基于浏览器的高级图片去水印和画质增强工具。"
+    }
+    </script>
+</head>
+<body>
+
+<main class="container">
+    <header>
+        <h1>Gemini 图片去水印 <span class="badge">PRO</span></h1>
+        <p class="subtitle">智能识别周围纹理，实现无痕修复 (本地引擎版)</p>
+    </header>
+
+    <div id="ai-status" class="status-bar loading">
+        <span class="spinner"></span> 正在初始化本地 AI 引擎... (首次加载需几秒)
+    </div>
+
+    <section id="drop-zone">
+        <div class="icon-upload">📁</div>
+        <p>点击或拖拽图片到这里</p>
+        <span class="file-info">支持 JPG / PNG / WebP</span>
+        <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" hidden>
+    </section>
+
+    <section class="workspace" id="workspace" style="display: none;">
+        <div class="canvas-wrapper">
+            <canvas id="main-canvas"></canvas>
+            <div id="selection-box"></div>
+        </div>
+
+        <aside class="controls">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="crop">✂️ 裁剪</button>
+                <button class="tab-btn" data-tab="inpaint">🖌️ 智能修补</button>
+                <button class="tab-btn" data-tab="enhance">✨ 画质增强</button>
+            </div>
+
+            <div id="tab-crop" class="tab-panel active">
+                <div class="control-group">
+                    <label>底部切除高度: <span id="crop-val">40px</span></label>
+                    <input type="range" id="crop-slider" min="0" max="200" value="40">
+                </div>
+                <button class="btn btn-primary" id="btn-apply-crop">应用裁剪</button>
+                <p class="desc">最安全的去水印方式，直接切除底部文字区域。</p>
+            </div>
+
+            <div id="tab-inpaint" class="tab-panel">
+                <div class="alert-box">
+                    <strong>使用说明：</strong> 在左侧图片上框选水印区域，算法将分析周围纹理进行覆盖。
+                </div>
+                <div class="control-group">
+                    <label>修复半径: <span id="radius-val">3px</span></label>
+                    <input type="range" id="radius-slider" min="1" max="20" value="3">
+                </div>
+                <button class="btn btn-primary" id="btn-apply-inpaint" disabled>执行智能修复</button>
+            </div>
+
+            <div id="tab-enhance" class="tab-panel">
+                <div class="control-group">
+                    <label>锐化强度: <span id="sharp-val">0.5</span></label>
+                    <input type="range" id="sharp-slider" min="0" max="20" value="5">
+                </div>
+                <button class="btn btn-primary" id="btn-apply-enhance">应用 USM 锐化</button>
+            </div>
+
+            <div class="global-actions">
+                <button class="btn btn-secondary" id="btn-reset">↺ 重置</button>
+                <button class="btn btn-success" id="btn-download">💾 保存图片</button>
+            </div>
+        </aside>
+    </section>
+</main>
+
+<script async src="js/opencv.js" onload="onOpenCvReady()" onerror="onOpenCvError()" type="text/javascript"></script>
+<script src="js/processor.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+    // OpenCV 加载回调
+    function onOpenCvReady() {
+        // 双重检查 cv 对象是否存在
+        if (typeof cv !== 'undefined' && cv.getBuildInformation) {
+            console.log('Local OpenCV Loaded Successfully');
+            document.getElementById('ai-status').className = 'status-bar ready';
+            document.getElementById('ai-status').innerHTML = '✅ 本地 AI 引擎已就绪';
+            window.cvReady = true;
+        } else {
+            // 如果脚本加载了但对象未初始化，稍等重试
+            setTimeout(onOpenCvReady, 100);
+        }
+    }
+    
+    function onOpenCvError() {
+        const status = document.getElementById('ai-status');
+        status.innerHTML = '❌ 错误：在 js/ 目录下未找到 opencv.js 文件';
+        status.style.background = '#f8d7da';
+        status.style.color = '#721c24';
+    }
+</script>
+
+</body>
+</html>
